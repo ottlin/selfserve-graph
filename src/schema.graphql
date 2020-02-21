@@ -1,0 +1,63 @@
+enum EventStatus{
+  LIVE
+  PAST
+  STAGING
+  ARCHIVED
+  DELETED
+}
+
+enum UserRole{
+  MEETING_MANAGER
+  JUNIOR_MEETING_MANAGER
+  INTERNAL_ATTENDEE
+  EXTERNAL_ATTENDEE
+  EXECUTIVE_ADMIN
+  REQUESTOR
+  PARTNER
+}
+
+#TODO: type EventTemplate
+#TODO: type EngagementTemplate
+
+type Event {
+  id: ID!
+  name: String!
+  status: EventStatus!
+  city: String!
+  timezone: String!
+  startDate: DateTime!
+  endDate: DateTime!
+  supportEmail: String!
+  banner: String!
+# TODO: Relation to Engagement Type
+# TODO: Relation to Topic
+# TODO: Relation to Event 
+# TODO: Relation to User 
+}
+
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  password: String!
+  emailID: String!
+  eventRole: UserRole!
+  jobTitle: String
+  secondaryEmailID: String
+  phoneNumber: String
+  bio: String
+# TODO: Relation to Enagagement Type
+# TODO: Relation to Topic
+# TODO: Relation to Event 
+}
+
+type UserWithToken {
+	token: String!,
+	user: User!
+}
+
+type Mutation {
+	login(emailID:String!, password:String!): UserWithToken!
+	signup(emailID:String!, password:String!): String
+	resetPassword(emailID:String!, password:String!, old: String!): String
+}
