@@ -1,0 +1,10 @@
+{
+  "apps": [
+    {
+      "name": "api-neo4j",
+      "script": "npm",
+      "args": "start"
+    }
+  ]
+}
+

@@ -32,10 +32,10 @@ const schema = makeAugmentedSchema({
   typeDefs,
   config: {
     query: {
-      exclude: ['UserWithToken']
+      exclude: ['UserWithToken', 'EventUsersSetting', 'OtherSetting']
     },
     mutation: {
-      exclude: ['UserWithToken']
+      exclude: ['UserWithToken', 'EventUsersSetting', 'OtherSetting']
     }
   },
   resolvers,

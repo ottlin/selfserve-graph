@@ -16,23 +16,109 @@ enum UserRole{
   PARTNER
 }
 
-#TODO: type EventTemplate
-#TODO: type EngagementTemplate
+type EventTemplate {
+  id: ID!,
+  name: String!,
+  meetings: String!,
+  engagementTemplate: [EngagementTemplate] @relation(name: "HAS", direction: "IN")
+}
 
-type Event {
+type EngagementTemplate{
+  id: ID!,
+  name: String!,
+  meetingMinDuration: Int!,
+  meetingMaxDuration: Int!,
+  locationOffSites: Boolean!,
+  locationBoothTours: Boolean!,
+  attendeeOptionInternalAttendeeOption: Boolean!,
+  attendeeOptionHideInternalAttendeeSection: Boolean!,
+  attendeeOptionAtLeastOneInternalAttendeeIsRequired: Boolean!,
+  attendeeOptionAllowMeetingRequestorsToAddNewInternalAttendees: Boolean!,
+  attendeeOptionAtLeastOneUserOfAttendeeRoleIsRequired: Boolean!,
+  attachDocumentsAllowViewingOfAttachmentsOnMobile: Boolean!
+  attachDocumentsAttachDocumentsByUploadingFiles: Boolean!,
+  PostMeetingInternalSurveyRequestorsOfTheseRolesCanFillSurvey: [UserRole!],
+  PostMeetingInternalSurveyParticipantsOfTheseRolesCanFillSurvey: [UserRole!],
+  externalWidget: Boolean!,
+  mappings: Boolean!,
+  showInstructions: String!
+}
+
+type Engagement{
+  id: ID!,
+  name: String!,
+  meetingMinDuration: Int!,
+  meetingMaxDuration: Int!,
+  locationOffSites: Boolean!,
+  locationBoothTours: Boolean!,
+  attendeeOptionInternalAttendeeOption: Boolean!,
+  attendeeOptionHideInternalAttendeeSection: Boolean!,
+  attendeeOptionAtLeastOneInternalAttendeeIsRequired: Boolean!,
+  attendeeOptionAllowMeetingRequestorsToAddNewInternalAttendees: Boolean!,
+  attendeeOptionAtLeastOneUserOfAttendeeRoleIsRequired: Boolean!,
+  attachDocumentsAllowViewingOfAttachmentsOnMobile: Boolean!
+  attachDocumentsAttachDocumentsByUploadingFiles: Boolean!,
+  PostMeetingInternalSurveyRequestorsOfTheseRolesCanFillSurvey: [UserRole!],
+  PostMeetingInternalSurveyParticipantsOfTheseRolesCanFillSurvey: [UserRole!],
+  externalWidget: Boolean!,
+  mappings: Boolean!,
+  showInstructions: String!
+  type: [EngagementTemplate] @relation(name: "HAS", direction: "IN")
+}
+
+type EventUsersSetting {
+  endorsments: Boolean!,
+  doubleBooking: Boolean!,
+  pushNotification: Boolean!,
+  sendEmailOnMap: Boolean!
+}
+
+type Survey{
   id: ID!
-  name: String!
-  status: EventStatus!
-  city: String!
-  timezone: String!
-  startDate: DateTime!
-  endDate: DateTime!
-  supportEmail: String!
-  banner: String!
-# TODO: Relation to Engagement Type
-# TODO: Relation to Topic
-# TODO: Relation to Event 
-# TODO: Relation to User 
+  name: String!,
+  whenToCollect: String!,
+  surveyFor: [Engagement] @relation(name: "HAS", direction: "IN")
+}
+
+type OtherSetting{
+  quickMeeting: Boolean!,
+  mappingModule: Boolean!,
+  locations: Boolean!,
+  changeMeetingType: Boolean!,
+  enableEmailNotification: Boolean!,
+  enableICSNotification: Boolean!,
+  enablePushNotification: Boolean!
+  autoRemainder: Boolean!
+}
+
+type Topic {
+  id: ID!,
+  name: String!,
+  description: String,
+  # TODO: Relation to User
+  # TODO: Relation to Location
+  # TODO: Relation to Engagement Types 
+}
+
+type Track {
+  id: ID!,
+  name: String!,
+  description: String,
+  # TODO: Relation to Topic
+  # TODO: Relation to Engagement Types 
+}
+
+type Location {
+  id: ID!,
+  name: String!,
+  type: String!,
+  address: String!,
+  capacity: Int!,
+  contactNumber: String!,
+  accessibleBy: [UserRole],
+  description: String
+# TODO: Relation to Engagement Types 
+# TODO: Relation to Topics 
 }
 
 type User {
@@ -51,6 +137,27 @@ type User {
 # TODO: Relation to Event 
 }
 
+type Event {
+  id: ID!
+  name: String!
+  status: EventStatus!
+  city: String!
+  timezone: String!
+  startDate: DateTime!
+  endDate: DateTime!
+  supportEmail: String!
+  banner: String!
+  engagement: [Engagement] @relation(name: "HAS", direction: "IN")
+  location: [Location] @relation(name: "HAS", direction: "IN")
+  user: [User] @relation(name: "HAS", direction: "IN")
+  userSettings: EventUsersSetting 
+  topic: [Topic] @relation(name: "HAS", direction: "IN")
+  track: [Track] @relation(name: "HAS", direction: "IN")
+  survey: [Survey] @relation(name: "HAS", direction: "IN")
+# TODO: Relation to Roles and Privileges 
+  otherSetting: OtherSetting
+}
+
 type UserWithToken {
 	token: String!,
 	user: User!
@@ -58,6 +165,6 @@ type UserWithToken {
 
 type Mutation {
 	login(emailID:String!, password:String!): UserWithToken!
-	signup(emailID:String!, password:String!): String
+	register(emailID:String!, password:String!): String
 	resetPassword(emailID:String!, password:String!, old: String!): String
 }

@@ -28,7 +28,7 @@ async function login(parent, args, context) {
 	}
 }
 
-async function signup(parent, args, context) {
+async function register(parent, args, context) {
 
 	const session = context.driver.session()
 	const result = await session.run(`MATCH (u) WHERE u.emailID = '${args.emailID}' RETURN u as user`)
@@ -74,5 +74,5 @@ async function resetPassword(parent, args, context){
 module.exports = {
     login,
     resetPassword,
-    signup
+    register
 }
