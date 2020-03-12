@@ -14,6 +14,7 @@ enum UserRole{
   EXECUTIVE_ADMIN
   REQUESTOR
   PARTNER
+  ANYONE
 }
 
 type EventTemplate {
@@ -47,23 +48,27 @@ type EngagementTemplate{
 type Engagement{
   id: ID!,
   name: String!,
-  meetingMinDuration: Int!,
-  meetingMaxDuration: Int!,
-  locationOffSites: Boolean!,
-  locationBoothTours: Boolean!,
-  attendeeOptionInternalAttendeeOption: Boolean!,
-  attendeeOptionHideInternalAttendeeSection: Boolean!,
-  attendeeOptionAtLeastOneInternalAttendeeIsRequired: Boolean!,
-  attendeeOptionAllowMeetingRequestorsToAddNewInternalAttendees: Boolean!,
-  attendeeOptionAtLeastOneUserOfAttendeeRoleIsRequired: Boolean!,
-  attachDocumentsAllowViewingOfAttachmentsOnMobile: Boolean!
-  attachDocumentsAttachDocumentsByUploadingFiles: Boolean!,
-  PostMeetingInternalSurveyRequestorsOfTheseRolesCanFillSurvey: [UserRole!],
-  PostMeetingInternalSurveyParticipantsOfTheseRolesCanFillSurvey: [UserRole!],
-  externalWidget: Boolean!,
-  mappings: Boolean!,
-  showInstructions: String!
-  type: [EngagementTemplate] @relation(name: "HAS", direction: "IN")
+  meetingMinDuration: Int,
+  meetingMaxDuration: Int,
+  locationOffSites: Boolean,
+  locationBoothTours: Boolean,
+  attendeeOptionInternalAttendeeOption: Boolean,
+  attendeeOptionHideInternalAttendeeSection: Boolean,
+  attendeeOptionAtLeastOneInternalAttendeeIsRequired: Boolean,
+  attendeeOptionAllowMeetingRequestorsToAddNewInternalAttendees: Boolean,
+  attendeeOptionAtLeastOneUserOfAttendeeRoleIsRequired: Boolean,
+  attachDocumentsAllowViewingOfAttachmentsOnMobile: Boolean,
+  attachDocumentsAttachDocumentsByUploadingFiles: Boolean,
+  PostMeetingInternalSurveyRequestorsOfTheseRolesCanFillSurvey: [UserRole],
+  PostMeetingInternalSurveyParticipantsOfTheseRolesCanFillSurvey: [UserRole],
+  externalWidget: Boolean,
+  mappings: Boolean,
+  showInstructions: String,
+  active: Boolean,
+  type: String!,
+  createdAt: DateTime!,
+  createdBy: String!,
+  canBeRequestedBy: [UserRole!]
 }
 
 type EventUsersSetting {
