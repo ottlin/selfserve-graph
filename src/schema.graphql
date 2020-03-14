@@ -17,37 +17,23 @@ enum UserRole{
   ANYONE
 }
 
+enum EngagementTemplateType{
+  GENERAL
+  RECURRING
+}
+
 type EventTemplate {
   id: ID!,
   name: String!,
   meetings: String!,
+  additionalInfo: [String],
   engagementTemplate: [EngagementTemplate] @relation(name: "HAS", direction: "IN")
 }
 
 type EngagementTemplate{
   id: ID!,
   name: String!,
-  meetingMinDuration: Int!,
-  meetingMaxDuration: Int!,
-  locationOffSites: Boolean!,
-  locationBoothTours: Boolean!,
-  attendeeOptionInternalAttendeeOption: Boolean!,
-  attendeeOptionHideInternalAttendeeSection: Boolean!,
-  attendeeOptionAtLeastOneInternalAttendeeIsRequired: Boolean!,
-  attendeeOptionAllowMeetingRequestorsToAddNewInternalAttendees: Boolean!,
-  attendeeOptionAtLeastOneUserOfAttendeeRoleIsRequired: Boolean!,
-  attachDocumentsAllowViewingOfAttachmentsOnMobile: Boolean!
-  attachDocumentsAttachDocumentsByUploadingFiles: Boolean!,
-  PostMeetingInternalSurveyRequestorsOfTheseRolesCanFillSurvey: [UserRole!],
-  PostMeetingInternalSurveyParticipantsOfTheseRolesCanFillSurvey: [UserRole!],
-  externalWidget: Boolean!,
-  mappings: Boolean!,
-  showInstructions: String!
-}
-
-type Engagement{
-  id: ID!,
-  name: String!,
+  type: EngagementTemplateType,
   meetingMinDuration: Int,
   meetingMaxDuration: Int,
   locationOffSites: Boolean,
@@ -63,12 +49,39 @@ type Engagement{
   PostMeetingInternalSurveyParticipantsOfTheseRolesCanFillSurvey: [UserRole],
   externalWidget: Boolean,
   mappings: Boolean,
+  showInstructions: String
+}
+
+type Engagement{
+  id: ID!,
+  name: String!,
+  meetingMinDuration: Int,
+  active: Boolean!,
+  meetingMaxDuration: Int,
+  locationOffSites: Boolean,
+  locationBoothTours: Boolean,
+  attendeeOptionInternalAttendeeOption: Boolean,
+  attendeeOptionHideInternalAttendeeSection: Boolean,
+  attendeeOptionAtLeastOneInternalAttendeeIsRequired: Boolean,
+  attendeeOptionAllowMeetingRequestorsToAddNewInternalAttendees: Boolean,
+  attendeeOptionAtLeastOneUserOfAttendeeRoleIsRequired: Boolean,
+  attachDocumentsAllowViewingOfAttachmentsOnMobile: Boolean,
+  attachDocumentsAttachDocumentsByUploadingFiles: Boolean,
+  PostMeetingInternalSurveyRequestorsOfTheseRolesCanFillSurvey: [UserRole],
+  PostMeetingInternalSurveyParticipantsOfTheseRolesCanFillSurvey: [UserRole],
+  externalWidget: Boolean,
+  mappings: Boolean,
   showInstructions: String,
-  active: Boolean,
   type: String!,
   createdAt: DateTime!,
   createdBy: String!,
-  canBeRequestedBy: [UserRole!]
+  canBeRequestedBy: [UserRole!],
+  event: [Event] @relation(name: "IS", direction: "IN"),
+  location: [Location] @relation(name: "ACCESS", direction: "BOTH")
+  user: [User] @relation(name: "ACCESS", direction: "BOTH")
+  topic: [Topic] @relation(name: "ACCESS", direction: "BOTH")
+  track: [Track] @relation(name: "ACCESS", direction: "BOTH")
+  survey: [Survey] @relation(name: "ACCESS", direction: "BOTH")
 }
 
 type EventUsersSetting {
@@ -80,48 +93,70 @@ type EventUsersSetting {
 
 type Survey{
   id: ID!
+  active: Boolean!,
   name: String!,
   whenToCollect: String!,
-  surveyFor: [Engagement] @relation(name: "HAS", direction: "IN")
+  engagement: [Engagement] @relation(name: "ACCESS", direction: "BOTH")
+  event: [Event] @relation(name: "IS", direction: "IN")
 }
 
 type OtherSetting{
-  quickMeeting: Boolean!,
-  mappingModule: Boolean!,
-  locations: Boolean!,
-  changeMeetingType: Boolean!,
-  enableEmailNotification: Boolean!,
-  enableICSNotification: Boolean!,
-  enablePushNotification: Boolean!
-  autoRemainder: Boolean!
+  quickMeeting: Boolean,
+  mappingModule: Boolean,
+  locations: Boolean,
+  interimTimeBlock: Int,
+  changeMeetingType: Boolean,
+  enableEmailNotification: Boolean,
+  enableICSNotification: Boolean,
+  enablePushNotification: Boolean
+  autoRemainder: Boolean,
+  whoWillgetReminders: [UserRole],
+  selectMeetingTypes: [Engagement] @relation(name: "HAS", direction: "IN")
 }
 
 type Topic {
   id: ID!,
   name: String!,
   description: String,
+  active: Boolean!,
+  engagement: [Engagement] @relation(name: "ACCESS", direction: "BOTH")
+  location: [Location] @relation(name: "ACCESS", direction: "BOTH")
+  user: [User] @relation(name: "ACCESS", direction: "BOTH")
+  topic: [Topic] @relation(name: "ACCESS", direction: "BOTH")
+  track: [Track] @relation(name: "ACCESS", direction: "BOTH")
+  survey: [Survey] @relation(name: "ACCESS", direction: "BOTH")
   # TODO: Relation to User
   # TODO: Relation to Location
   # TODO: Relation to Engagement Types 
+  event: [Event] @relation(name: "IS", direction: "IN")
+
 }
 
 type Track {
   id: ID!,
   name: String!,
+  active: Boolean!,
   description: String,
+  topic: [Topic] @relation(name: "ACCESS", direction: "BOTH")
+  engagement: [Engagement] @relation(name: "ACCESS", direction: "BOTH")
   # TODO: Relation to Topic
   # TODO: Relation to Engagement Types 
+  event: [Event] @relation(name: "IS", direction: "IN")
 }
 
 type Location {
   id: ID!,
   name: String!,
+  active: Boolean!,
   type: String!,
   address: String!,
   capacity: Int!,
   contactNumber: String!,
   accessibleBy: [UserRole],
   description: String
+  event: [Event] @relation(name: "IS", direction: "IN")
+  topic: [Topic] @relation(name: "ACCESS", direction: "BOTH")
+  engagement: [Engagement] @relation(name: "ACCESS", direction: "BOTH")
 # TODO: Relation to Engagement Types 
 # TODO: Relation to Topics 
 }
@@ -130,6 +165,7 @@ type User {
   id: ID!
   firstName: String!
   lastName: String!
+  active: Boolean!,
   password: String!
   emailID: String!
   eventRole: UserRole!
@@ -137,6 +173,9 @@ type User {
   secondaryEmailID: String
   phoneNumber: String
   bio: String
+  event: [Event] @relation(name: "IS", direction: "IN")
+  topic: [Topic] @relation(name: "ACCESS", direction: "BOTH")
+  engagement: [Engagement] @relation(name: "ACCESS", direction: "BOTH")
 # TODO: Relation to Enagagement Type
 # TODO: Relation to Topic
 # TODO: Relation to Event 
@@ -152,13 +191,13 @@ type Event {
   endDate: DateTime!
   supportEmail: String!
   banner: String!
-  engagement: [Engagement] @relation(name: "HAS", direction: "IN")
-  location: [Location] @relation(name: "HAS", direction: "IN")
-  user: [User] @relation(name: "HAS", direction: "IN")
+  engagement: [Engagement] @relation(name: "HAS", direction: "OUT")
+  location: [Location] @relation(name: "HAS", direction: "OUT")
+  user: [User] @relation(name: "HAS", direction: "OUT")
   userSettings: EventUsersSetting 
-  topic: [Topic] @relation(name: "HAS", direction: "IN")
-  track: [Track] @relation(name: "HAS", direction: "IN")
-  survey: [Survey] @relation(name: "HAS", direction: "IN")
+  topic: [Topic] @relation(name: "HAS", direction: "OUT")
+  track: [Track] @relation(name: "HAS", direction: "OUT")
+  survey: [Survey] @relation(name: "HAS", direction: "OUT")
 # TODO: Relation to Roles and Privileges 
   otherSetting: OtherSetting
 }
