@@ -76,7 +76,6 @@ type Engagement{
   createdAt: DateTime!,
   createdBy: String!,
   canBeRequestedBy: [UserRole!],
-  event: [Event] @relation(name: "IS", direction: "IN"),
   location: [Location] @relation(name: "ACCESS", direction: "BOTH")
   user: [User] @relation(name: "ACCESS", direction: "BOTH")
   topic: [Topic] @relation(name: "ACCESS", direction: "BOTH")
@@ -97,7 +96,6 @@ type Survey{
   name: String!,
   whenToCollect: String!,
   engagement: [Engagement] @relation(name: "ACCESS", direction: "BOTH")
-  event: [Event] @relation(name: "IS", direction: "IN")
 }
 
 type OtherSetting{
@@ -128,7 +126,6 @@ type Topic {
   # TODO: Relation to User
   # TODO: Relation to Location
   # TODO: Relation to Engagement Types 
-  event: [Event] @relation(name: "IS", direction: "IN")
 
 }
 
@@ -141,7 +138,6 @@ type Track {
   engagement: [Engagement] @relation(name: "ACCESS", direction: "BOTH")
   # TODO: Relation to Topic
   # TODO: Relation to Engagement Types 
-  event: [Event] @relation(name: "IS", direction: "IN")
 }
 
 type Location {
@@ -154,7 +150,6 @@ type Location {
   contactNumber: String!,
   accessibleBy: [UserRole],
   description: String
-  event: [Event] @relation(name: "IS", direction: "IN")
   topic: [Topic] @relation(name: "ACCESS", direction: "BOTH")
   engagement: [Engagement] @relation(name: "ACCESS", direction: "BOTH")
 # TODO: Relation to Engagement Types 
