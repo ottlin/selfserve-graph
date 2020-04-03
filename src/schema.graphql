@@ -34,53 +34,56 @@ type EngagementTemplate{
   id: ID!,
   name: String!,
   type: EngagementTemplateType,
-  meetingMinDuration: Int,
-  meetingMaxDuration: Int,
-  locationOffSites: Boolean,
-  locationBoothTours: Boolean,
-  attendeeOptionInternalAttendeeOption: Boolean,
-  attendeeOptionHideInternalAttendeeSection: Boolean,
-  attendeeOptionAtLeastOneInternalAttendeeIsRequired: Boolean,
-  attendeeOptionAllowMeetingRequestorsToAddNewInternalAttendees: Boolean,
-  attendeeOptionAtLeastOneUserOfAttendeeRoleIsRequired: Boolean,
-  attachDocumentsAllowViewingOfAttachmentsOnMobile: Boolean,
-  attachDocumentsAttachDocumentsByUploadingFiles: Boolean,
-  PostMeetingInternalSurveyRequestorsOfTheseRolesCanFillSurvey: [UserRole],
-  PostMeetingInternalSurveyParticipantsOfTheseRolesCanFillSurvey: [UserRole],
-  externalWidget: Boolean,
-  mappings: Boolean,
-  showInstructions: String
+  workflows: [Workflow]
+}
+
+enum FormFieldType{
+  TOGGLE
+  SELECT
+  MULTISELECT
+  INPUT
+  TEXTAREA
+  RADIO
+  CHECKBOX
+}
+
+enum FormFieldMode{
+  INLINE
+  BLOCK
+}
+
+type FormField {
+  id: ID!,
+  type: FormFieldType!,
+  mode: FormFieldMode!,
+  headerText: String,
+  options: [String],
+  value: String,
+}
+
+type Workflow {
+  id: ID!,
+  menu: String!,
+  submenu: String,
+  helperText: String,
+  enabled: Boolean!,
+  formField: [FormField] @relation(name: "IS", direction: "IN")
 }
 
 type Engagement{
   id: ID!,
   name: String!,
-  meetingMinDuration: Int,
   active: Boolean!,
-  meetingMaxDuration: Int,
-  locationOffSites: Boolean,
-  locationBoothTours: Boolean,
-  attendeeOptionInternalAttendeeOption: Boolean,
-  attendeeOptionHideInternalAttendeeSection: Boolean,
-  attendeeOptionAtLeastOneInternalAttendeeIsRequired: Boolean,
-  attendeeOptionAllowMeetingRequestorsToAddNewInternalAttendees: Boolean,
-  attendeeOptionAtLeastOneUserOfAttendeeRoleIsRequired: Boolean,
-  attachDocumentsAllowViewingOfAttachmentsOnMobile: Boolean,
-  attachDocumentsAttachDocumentsByUploadingFiles: Boolean,
-  PostMeetingInternalSurveyRequestorsOfTheseRolesCanFillSurvey: [UserRole],
-  PostMeetingInternalSurveyParticipantsOfTheseRolesCanFillSurvey: [UserRole],
-  externalWidget: Boolean,
-  mappings: Boolean,
-  showInstructions: String,
   type: String!,
   createdAt: DateTime!,
   createdBy: String!,
   canBeRequestedBy: [UserRole!],
-  location: [Location] @relation(name: "ACCESS", direction: "BOTH")
-  user: [User] @relation(name: "ACCESS", direction: "BOTH")
-  topic: [Topic] @relation(name: "ACCESS", direction: "BOTH")
-  track: [Track] @relation(name: "ACCESS", direction: "BOTH")
-  survey: [Survey] @relation(name: "ACCESS", direction: "BOTH")
+  workflow: [Workflow] @relation(name: "IS", direction: "IN"),
+  location: [Location] @relation(name: "ACCESS", direction: "BOTH"),
+  user: [User] @relation(name: "ACCESS", direction: "BOTH"),
+  topic: [Topic] @relation(name: "ACCESS", direction: "BOTH"),
+  track: [Track] @relation(name: "ACCESS", direction: "BOTH"),
+  survey: [Survey] @relation(name: "ACCESS", direction: "BOTH"),
 }
 
 type EventUsersSetting {
